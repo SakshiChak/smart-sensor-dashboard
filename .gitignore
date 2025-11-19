@@ -1,0 +1,61 @@
+# ==========================
+# Node.js & Backend Ignore
+# ==========================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+
+# Local environment files
+.env
+.env.local
+.env.development
+.env.production
+.env.test
+
+# Logs
+logs/
+*.log
+*.tmp
+
+# Build output
+dist/
+build/
+.tmp/
+
+# PM2 logs
+.pids
+*.pid
+
+# TypeScript cache
+*.tsbuildinfo
+
+# ==========================
+# React (Vite) Frontend Ignore
+# ==========================
+frontend/node_modules/
+frontend/dist/
+frontend/.env
+
+# Vite cache
+.vite/
+
+# ==========================
+# System & Editor Files
+# ==========================
+.DS_Store
+Thumbs.db
+
+# IDE specific
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ==========================
+# OS generated files
+# ==========================
+*.bak
+*.cache
+*.temp
