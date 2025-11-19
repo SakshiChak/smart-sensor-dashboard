@@ -11,7 +11,7 @@ export default function App() {
     socket.on("sensor-data", (incoming) => {
       try {
         const data = JSON.parse(incoming);
-        setSensorData(data); // Update state to trigger re-render
+        setSensorData(data); 
       } catch (err) {
         console.error("Failed to parse sensor data:", err);
       }

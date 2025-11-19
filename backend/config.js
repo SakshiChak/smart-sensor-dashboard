@@ -1,5 +1,3 @@
-const { mongo } = require('mongoose');
-
 require('dotenv').config();
 
 module.exports = {
