@@ -1,56 +1,41 @@
 const express = require("express");
+const mongoose = require("mongoose");
 const http = require("http");
 const cors = require("cors");
-const mqtt = require("mqtt");
+const config = require("./config");
+const startMQTT = require("./mqttService"); 
+const { initWebSocket } = require("./websocket"); 
 
+// ----------------------
+// Express + Server Setup
+// ----------------------
 const app = express();
 app.use(cors());
-
 const server = http.createServer(app);
 
 // ----------------------
-// SOCKET.IO SETUP
+// MongoDB Connection
 // ----------------------
-const { Server } = require("socket.io");
-const io = new Server(server, {
-  cors: { origin: "*" }
-});
-
-io.on("connection", (socket) => {
-  console.log("Frontend connected:", socket.id);
-});
+mongoose.connect(config.mongoUrl, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+})
+.then(() => console.log("MongoDB connected"))
+.catch(err => console.error("MongoDB connection error:", err));
 
 // ----------------------
-// MQTT SETUP
+// Socket.IO Setup
 // ----------------------
-const mqttClient = mqtt.connect("mqtt://localhost:1883");
-
-mqttClient.on("connect", () => {
-  console.log("MQTT connected");
-
-  mqttClient.subscribe("sensor/room1", (err) => {
-    if (!err) console.log("Subscribed to sensor/room1");
-  });
-});
-
-// Receive → forward to frontend
-mqttClient.on("message", (topic, message) => {
-  const data = JSON.parse(message.toString());
-
-  // EMIT EXACT EVENT NAME
-  io.emit(
-  "sensor-data",
-  JSON.stringify({
-    ...data,
-    timestamp: Date.now()   // always fresh → UI updates
-  })
-);
-
-
-  console.log("Forwarded to frontend:", data);
-});
+initWebSocket(server); // initialize Socket.IO
 
 // ----------------------
-server.listen(5000, () => {
-  console.log("Server running on port 5000");
+// Start MQTT Service
+// ----------------------
+startMQTT(); // MQTT runs independently and emits to clients
+
+// ----------------------
+// Start Server
+// ----------------------
+server.listen(config.port, () => {
+  console.log(`Server running on port ${config.port}`);
 });

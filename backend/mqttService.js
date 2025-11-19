@@ -8,18 +8,36 @@ function startMQTT() {
 
   client.on("connect", () => {
     console.log("MQTT Connected");
-    client.subscribe(config.mqtt.topic);
+    client.subscribe(config.mqtt.topic, (err) => {
+      if (err) console.error("MQTT subscription error:", err);
+      else console.log(`Subscribed to topic: ${config.mqtt.topic}`);
+    });
   });
 
   client.on("message", async (topic, message) => {
-    const data = JSON.parse(message.toString());
-    console.log("Received:", data);
+    let data;
+
+    // Safe JSON parsing
+    try {
+      data = JSON.parse(message.toString());
+    } catch (err) {
+      return console.error("Invalid JSON received:", err);
+    }
+
+    // Add timestamp
+    if (!data.timestamp) data.timestamp = new Date();
 
     // Save to DB
-    await Sensor.create(data);
+    try {
+      const saved = await Sensor.create(data);
+      console.log("Saved to DB:", saved);
+    } catch (err) {
+      console.error("DB save error:", err);
+    }
 
-    // Send to frontend (live)
+    // Send to frontend
     emitToClients(data);
+    console.log("Sent to frontend:", data);
   });
 }
 

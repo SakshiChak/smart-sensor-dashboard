@@ -1,23 +1,28 @@
+const { Server } = require("socket.io");
+
 let clients = [];
 
 function initWebSocket(server) {
-  const { Server } = require("socket.io");
   const io = new Server(server, {
     cors: { origin: "*" }
   });
 
   io.on("connection", (socket) => {
+    console.log("Frontend connected:", socket.id);
     clients.push(socket);
-    console.log("Client connected");
 
     socket.on("disconnect", () => {
       clients = clients.filter(c => c !== socket);
+      console.log("Frontend disconnected:", socket.id);
     });
   });
 }
 
 function emitToClients(data) {
-  clients.forEach(client => client.emit("sensor-data", data));
+  clients.forEach(socket => socket.emit("sensor-data", JSON.stringify({
+    ...data,
+    timestamp: Date.now()
+  })));
 }
 
 module.exports = { initWebSocket, emitToClients };
