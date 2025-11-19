@@ -10,13 +10,13 @@ const { initWebSocket } = require("./websocket");
 // Express + Server Setup
 // ----------------------
 const app = express();
-app.use(cors());
+app.use(cors({origin: process.env.ALLOWED_ORIGINS })); // CORS setup
 const server = http.createServer(app);
 
 // ----------------------
 // MongoDB Connection
 // ----------------------
-mongoose.connect(config.mongoUrl, {
+mongoose.connect(config.mongodb.uri, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 })

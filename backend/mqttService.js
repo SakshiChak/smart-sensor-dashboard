@@ -4,10 +4,11 @@ const Sensor = require("./models/SensorReading");
 const { emitToClients } = require("./websocket");
 
 function startMQTT() {
-  const client = mqtt.connect(config.mqtt.url);
+  const client = mqtt.connect(config.mqtt.brokerUrl);
 
   client.on("connect", () => {
     console.log("MQTT Connected");
+    
     client.subscribe(config.mqtt.topic, (err) => {
       if (err) console.error("MQTT subscription error:", err);
       else console.log(`Subscribed to topic: ${config.mqtt.topic}`);
