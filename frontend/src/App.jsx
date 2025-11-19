@@ -2,70 +2,51 @@ import { useEffect, useState } from "react";
 import { io } from "socket.io-client";
 
 export default function App() {
-  const [data, setData] = useState(null);
+  const [sensorData, setSensorData] = useState(null);
 
+  // Connect to Socket.IO server
   useEffect(() => {
-    const socket = io("http://localhost:5000", );
+    const socket = io("http://localhost:5000");
 
     socket.on("sensor-data", (incoming) => {
-      setData({ ...JSON.parse(incoming) }); // force re-render
-
+      try {
+        const data = JSON.parse(incoming);
+        setSensorData(data); // Update state to trigger re-render
+      } catch (err) {
+        console.error("Failed to parse sensor data:", err);
+      }
     });
 
     return () => socket.disconnect();
   }, []);
 
   return (
-    <div style={styles.container}>
-      <h1 style={styles.title}>Smart Sensor Dashboard</h1>
+    <div className="min-h-screen flex flex-col items-center justify-center p-6 transition bg-gray-100 dark:bg-gray-900">
 
-      {!data ? (
-        <p style={styles.wait}>Waiting for live sensor data...</p>
-      ) : (
-        <div style={styles.card}>
-          <h2 style={styles.temp}>🌡 Temperature: {data.temperature} °C</h2>
-          <h2 style={styles.humidity}>💧 Humidity: {data.humidity} %</h2>
-          <p style={styles.time}>
-            ⏱ {new Date(data.timestamp).toLocaleTimeString()}
-          </p>
-        </div>
-      )}
+      {/* Sensor Card */}
+      <div className="w-full max-w-md p-6 rounded-2xl shadow-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 transition">
+        <h1 className="text-2xl font-bold mb-4 text-center">🌡 Sensor Dashboard</h1>
+
+        {!sensorData ? (
+          <p className="text-center text-gray-500">Waiting for live sensor data...</p>
+        ) : (
+          <div className="flex flex-col gap-4">
+            <div className="p-4 rounded-xl bg-gray-200 dark:bg-gray-700">
+              <h2 className="text-lg font-semibold">Temperature</h2>
+              <p className="text-3xl font-bold mt-1">{sensorData.temperature}°C</p>
+            </div>
+
+            <div className="p-4 rounded-xl bg-gray-200 dark:bg-gray-700">
+              <h2 className="text-lg font-semibold">Humidity</h2>
+              <p className="text-3xl font-bold mt-1">{sensorData.humidity}%</p>
+            </div>
+
+            <p className="text-center text-sm opacity-70 mt-2">
+              Last Updated: {sensorData.timestamp ? new Date(sensorData.timestamp).toLocaleTimeString() : "-"} ⏱
+            </p>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
-
-const styles = {
-  container: {
-    fontFamily: "Arial",
-    textAlign: "center",
-    padding: "40px",
-  },
-  title: {
-    fontSize: "32px",
-    marginBottom: "20px",
-  },
-  wait: {
-    fontSize: "20px",
-    marginTop: "30px",
-    color: "#666",
-  },
-  card: {
-    display: "inline-block",
-    padding: "25px 40px",
-    background: "#f8f8f8",
-    borderRadius: "15px",
-    boxShadow: "0px 0px 10px rgba(0,0,0,0.1)",
-  },
-  temp: {
-    fontSize: "24px",
-    margin: "10px 0",
-  },
-  humidity: {
-    fontSize: "24px",
-    margin: "10px 0",
-  },
-  time: {
-    marginTop: "15px",
-    color: "#555",
-  },
-};
