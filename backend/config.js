@@ -8,7 +8,7 @@ module.exports = {
   apiVersion: process.env.API_VERSION || 'v1',
   
   mqtt: {
-    brokerUrl: MQTT_BROKER_URL||"mqtt://localhost:1883",
+    brokerUrl: process.env.MQTT_BROKER_URL||"mqtt://localhost:1883",
     topic: "sensor/room1"
   },
   
