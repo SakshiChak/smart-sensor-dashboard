@@ -4,7 +4,7 @@ let clients = [];
 
 function initWebSocket(server) {
   const io = new Server(server, {
-    cors: { origin: "*" }
+    cors: { origin: process.env.ALLOWED_ORIGINS  }
   });
 
   io.on("connection", (socket) => {
