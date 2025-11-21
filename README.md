@@ -46,8 +46,7 @@ React Frontend (UI dashboard)
 
 ### 🔹 Frontend Features
 - Clean, modern **React + Vite** dashboard  
-- Live temperature & humidity cards  
-- Real-time line graph  
+- Live temperature & humidity cards 
 - Connection status indicator (“**Waiting for live sensor data…**”)  
 
 ### 🔹 Backend Features
@@ -83,6 +82,54 @@ React Frontend (UI dashboard)
 ### 🔹 IoT
 - MQTT Protocol
 - Mosquitto Broker
+
+---
+
+## ⚙️ Backend Setup
+
+### 1️⃣ Install dependencies
+```
+cd backend
+npm install
+```
+### 2️⃣ Start backend server
+```
+npm run dev
+```
+Backend will run at:
+👉 http://localhost:5000
+
+📡 MQTT Setup
+Install Mosquitto Broker
+Linux
+```
+sudo apt install mosquitto mosquitto-clients
+sudo systemctl start mosquitto
+```
+🚀 Run Sensor Simulator (Optional)
+
+Install MQTT library (only first time)
+```
+cd sensor-simulator
+npm install 
+```
+Start simulator
+```
+node publisher.js
+```
+🖥 Frontend Setup
+
+### 1️⃣ Install dependencies
+```
+cd frontend
+npm install
+```
+### 2️⃣ Start frontend
+```
+npm run dev
+```
+Frontend will run at:
+👉 http://localhost:5173
 
 ---
 
